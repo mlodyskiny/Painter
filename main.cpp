@@ -85,19 +85,18 @@ int main(int argc, char* argv[])
 			const auto SplitDrawPositions = Utils::SplitVector(ParsedDrawPositions, Cookies.size());
 
 			// nwm wale jako ptr bo nie wiem czy bez sie zjebie XDDDDD
-			std::vector<std::pair<NPainter*, std::thread*>> Painters{};
+			std::vector<std::pair<NPainter*, std::thread>> Painters{};
 			for (size_t i = 0; i < Cookies.size(); ++i)
 			{
 				NPainter* Painter = new NPainter(Cookies[i]);
 				Painters.emplace_back(
-					Painter, new std::thread(&NPainter::DrawList, Painter, SplitDrawPositions[i], StartPos)
+					Painter, std::thread(&NPainter::DrawList, Painter, SplitDrawPositions[i], StartPos)
 				);
 			}
 
 			for (auto& [Painter, Thread] : Painters)
 			{
-				Thread->join();
-				delete Thread;
+				Thread.join();
 				delete Painter;
 			}
 		}
